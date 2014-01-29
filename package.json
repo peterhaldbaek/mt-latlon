@@ -1,0 +1,24 @@
+{
+  "name": "mt-latlon",
+  "version": "0.0.1",
+  "description": "Geodesy representation conversion functions",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/peterhaldbaek/mt-latlon.git"
+  },
+  "keywords": [
+    "geo",
+    "latitude",
+    "longitude"
+  ],
+  "author": "Peter Haldbæk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/peterhaldbaek/mt-latlon/issues"
+  },
+  "homepage": "https://github.com/peterhaldbaek/mt-latlon",
+  "dependencies": {
+    "mt-geo": "0.0.2"
+  }
+}
