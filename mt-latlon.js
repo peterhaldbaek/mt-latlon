@@ -118,17 +118,17 @@
      * @returns {LatLon} Midpoint between this point and the supplied point
      */
     LatLon.prototype.midpointTo = function(point) {
-      lat1 = this._lat.toRad(), lon1 = this._lon.toRad();
-      lat2 = point._lat.toRad();
+      var lat1 = this._lat.toRad(), lon1 = this._lon.toRad();
+      var lat2 = point._lat.toRad();
       var dLon = (point._lon-this._lon).toRad();
 
       var Bx = Math.cos(lat2) * Math.cos(dLon);
       var By = Math.cos(lat2) * Math.sin(dLon);
 
-      lat3 = Math.atan2(Math.sin(lat1)+Math.sin(lat2),
+      var lat3 = Math.atan2(Math.sin(lat1)+Math.sin(lat2),
                         Math.sqrt( (Math.cos(lat1)+Bx)*(Math.cos(lat1)+Bx) + By*By) );
-      lon3 = lon1 + Math.atan2(By, Math.cos(lat1) + Bx);
-      lon3 = (lon3+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
+      var lon3 = lon1 + Math.atan2(By, Math.cos(lat1) + Bx);
+      var lon3 = (lon3+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
       
       return new LatLon(lat3.toDeg(), lon3.toDeg());
     }
@@ -174,22 +174,23 @@
     LatLon.intersection = function(p1, brng1, p2, brng2) {
       brng1 = typeof brng1 == 'number' ? brng1 : typeof brng1 == 'string' && trim(brng1)!='' ? +brng1 : NaN;
       brng2 = typeof brng2 == 'number' ? brng2 : typeof brng2 == 'string' && trim(brng2)!='' ? +brng2 : NaN;
-      lat1 = p1._lat.toRad(), lon1 = p1._lon.toRad();
-      lat2 = p2._lat.toRad(), lon2 = p2._lon.toRad();
-      brng13 = brng1.toRad(), brng23 = brng2.toRad();
-      dLat = lat2-lat1, dLon = lon2-lon1;
+      var lat1 = p1._lat.toRad(), lon1 = p1._lon.toRad();
+      var lat2 = p2._lat.toRad(), lon2 = p2._lon.toRad();
+      var brng13 = brng1.toRad(), brng23 = brng2.toRad();
+      var dLat = lat2-lat1, dLon = lon2-lon1;
       
-      dist12 = 2*Math.asin( Math.sqrt( Math.sin(dLat/2)*Math.sin(dLat/2) + 
+      var dist12 = 2*Math.asin( Math.sqrt( Math.sin(dLat/2)*Math.sin(dLat/2) + 
         Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)*Math.sin(dLon/2) ) );
       if (dist12 == 0) return null;
       
       // initial/final bearings between points
-      brngA = Math.acos( ( Math.sin(lat2) - Math.sin(lat1)*Math.cos(dist12) ) / 
+      var brngA = Math.acos( ( Math.sin(lat2) - Math.sin(lat1)*Math.cos(dist12) ) / 
         ( Math.sin(dist12)*Math.cos(lat1) ) );
       if (isNaN(brngA)) brngA = 0;  // protect against rounding
-      brngB = Math.acos( ( Math.sin(lat1) - Math.sin(lat2)*Math.cos(dist12) ) / 
+      var brngB = Math.acos( ( Math.sin(lat1) - Math.sin(lat2)*Math.cos(dist12) ) / 
         ( Math.sin(dist12)*Math.cos(lat2) ) );
       
+      var brng12, brng21;
       if (Math.sin(lon2-lon1) > 0) {
         brng12 = brngA;
         brng21 = 2*Math.PI - brngB;
@@ -198,8 +199,8 @@
         brng21 = brngB;
       }
       
-      alpha1 = (brng13 - brng12 + Math.PI) % (2*Math.PI) - Math.PI;  // angle 2-1-3
-      alpha2 = (brng21 - brng23 + Math.PI) % (2*Math.PI) - Math.PI;  // angle 1-2-3
+      var alpha1 = (brng13 - brng12 + Math.PI) % (2*Math.PI) - Math.PI;  // angle 2-1-3
+      var alpha2 = (brng21 - brng23 + Math.PI) % (2*Math.PI) - Math.PI;  // angle 1-2-3
       
       if (Math.sin(alpha1)==0 && Math.sin(alpha2)==0) return null;  // infinite intersections
       if (Math.sin(alpha1)*Math.sin(alpha2) < 0) return null;       // ambiguous intersection
@@ -208,15 +209,15 @@
       //alpha2 = Math.abs(alpha2);
       // ... Ed Williams takes abs of alpha1/alpha2, but seems to break calculation?
       
-      alpha3 = Math.acos( -Math.cos(alpha1)*Math.cos(alpha2) + 
+      var alpha3 = Math.acos( -Math.cos(alpha1)*Math.cos(alpha2) + 
                            Math.sin(alpha1)*Math.sin(alpha2)*Math.cos(dist12) );
-      dist13 = Math.atan2( Math.sin(dist12)*Math.sin(alpha1)*Math.sin(alpha2), 
+      var dist13 = Math.atan2( Math.sin(dist12)*Math.sin(alpha1)*Math.sin(alpha2), 
                            Math.cos(alpha2)+Math.cos(alpha1)*Math.cos(alpha3) )
-      lat3 = Math.asin( Math.sin(lat1)*Math.cos(dist13) + 
+      var lat3 = Math.asin( Math.sin(lat1)*Math.cos(dist13) + 
                         Math.cos(lat1)*Math.sin(dist13)*Math.cos(brng13) );
-      dLon13 = Math.atan2( Math.sin(brng13)*Math.sin(dist13)*Math.cos(lat1), 
+      var dLon13 = Math.atan2( Math.sin(brng13)*Math.sin(dist13)*Math.cos(lat1), 
                            Math.cos(dist13)-Math.sin(lat1)*Math.sin(lat3) );
-      lon3 = lon1+dLon13;
+      var lon3 = lon1+dLon13;
       lon3 = (lon3+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
       
       return new LatLon(lat3.toDeg(), lon3.toDeg());
@@ -295,7 +296,7 @@
       // check for some daft bugger going past the pole, normalise latitude if so
       if (Math.abs(lat2) > Math.PI/2) lat2 = lat2>0 ? Math.PI-lat2 : -Math.PI-lat2;
       
-      lon2 = (lon1+dLon+3*Math.PI)%(2*Math.PI) - Math.PI;
+      var lon2 = (lon1+dLon+3*Math.PI)%(2*Math.PI) - Math.PI;
      
       return new LatLon(lat2.toDeg(), lon2.toDeg());
     }
@@ -308,8 +309,8 @@
      * @returns {LatLon} Midpoint between this point and the supplied point
      */
     LatLon.prototype.rhumbMidpointTo = function(point) {
-      lat1 = this._lat.toRad(), lon1 = this._lon.toRad();
-      lat2 = point._lat.toRad(), lon2 = point._lon.toRad();
+      var lat1 = this._lat.toRad(), lon1 = this._lon.toRad();
+      var lat2 = point._lat.toRad(), lon2 = point._lon.toRad();
       
       if (Math.abs(lon2-lon1) > Math.PI) lon1 += 2*Math.PI; // crossing anti-meridian
       
@@ -321,7 +322,7 @@
       
       if (!isFinite(lon3)) lon3 = (lon1+lon2)/2; // parallel of latitude
       
-      lon3 = (lon3+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
+      var lon3 = (lon3+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
       
       return new LatLon(lat3.toDeg(), lon3.toDeg());
     }
