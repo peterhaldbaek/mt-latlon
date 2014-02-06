@@ -1,7 +1,7 @@
 {
   "name": "mt-latlon",
-  "version": "0.0.1",
-  "description": "Geodesy representation conversion functions",
+  "version": "0.0.2",
+  "description": "Latitude/longitude spherical geodesy formulae & scripts.",
   "main": "index.js",
   "repository": {
     "type": "git",
