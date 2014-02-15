@@ -7,18 +7,18 @@ Latitude/longitude spherical geodesy formulae and scripts.
 Installation
 ------------
 
-    npm install mt-latlon
+    $ npm install mt-latlon
 
 
 Usage
 -----
 
-The module exposes the LatLon class which represents a point on the Earth's surface. With this class you can create LatLon objects on which you can perform various operations.
+The module exposes the `LatLon` class which represents a point on the earth's surface. With this class you can create `LatLon` objects on which you can perform various operations.
 
     var LatLon = require('mt-latlon');
     var point = new LatLon(51.5136, -0.0983);
 
-The available operations of the LatLon objects is listed below.
+The available operations of the `LatLon` objects is listed below.
 
 
 ### LatLon(lat, lon, rad)
@@ -112,7 +112,7 @@ var p2 = p1.destinationPoint(120, 10);
 
 ### LatLon.intersection(p1, brng1, p2, brng2)
 
-Returns the point of intersection of two paths defined by point and bearing. Null is returned if no unique intersection is defined.
+Returns the point of intersection of two paths defined by point and bearing. `null` is returned if no unique intersection is defined.
 (see http://williams.best.vwh.net/avform.htm#Intersection)
 
 - __p1__ (LatLon) First point
@@ -188,7 +188,7 @@ var p3 = p1.rhumbMidpointTo(p2);
 
 ### lat(format, dp)
 
-Returns the latitude of this point; signed numeric degrees if no format, otherwise format & dp as per Geo.toLat().
+Returns the latitude of this point; signed numeric degrees if no format, otherwise format and dp as per `Geo.toLat()`.
 
 - __format__ (string, optional) Return value as `d`, `dm`, `dms`
 - __dp__ (number, optional, 0|2|4) Number of decimal places to display
@@ -210,7 +210,7 @@ lat = p1.lat('d', 2);
 
 ### lon(format, dp)
 
-Returns the longitude of this point; signed numeric degrees if no format, otherwise format & dp as per Geo.toLon().
+Returns the longitude of this point; signed numeric degrees if no format, otherwise format and dp as per `Geo.toLon()`.
 
 - __format__ (string, optional) Return value as `d`, `dm`, `dms`
 - __dp__ (number, 0|2|4) Number of decimal places to display

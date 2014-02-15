@@ -1,7 +1,7 @@
 {
   "name": "mt-latlon",
-  "version": "0.0.2",
-  "description": "Latitude/longitude spherical geodesy formulae & scripts.",
+  "version": "0.0.3",
+  "description": "Latitude/longitude spherical geodesy formulae and scripts.",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -13,7 +13,10 @@
     "latitude",
     "longitude"
   ],
-  "author": "Peter Haldbæk",
+  "author": "Peter Haldbæk <peter.haldbaek@gmail.com>",
+  "contributors": [
+    "Peter Haldbæk <peter.haldbaek@gmail.com> (https://github.com/peterhaldbaek)"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/peterhaldbaek/mt-latlon/issues"
