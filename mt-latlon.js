@@ -405,7 +405,7 @@
         // ... but replace +ve exponential format with trailing zeros
         n = n.replace(/(.+)e\+(.+)/, function(n, sig, exp) {
           sig = sig.replace(/\./, '');       // remove decimal from significand
-          l = sig.length - 1;
+          var l = sig.length - 1;
           while (exp-- > l) sig = sig + '0'; // append zeros from exponent
           return sig;
         });
@@ -418,13 +418,6 @@
         });
         
         return n;
-      }
-    }
-
-    /** Trims whitespace from string (q.v. blog.stevenlevithan.com/archives/faster-trim-javascript) */
-    if (typeof String.prototype.trim == 'undefined') {
-      String.prototype.trim = function() {
-        return String(this).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
       }
     }
 
