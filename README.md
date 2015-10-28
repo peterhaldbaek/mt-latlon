@@ -7,7 +7,9 @@ Latitude/longitude spherical geodesy formulae and scripts.
 Installation
 ------------
 
-    $ npm install mt-latlon
+```bash
+$ npm install mt-latlon
+```
 
 
 Usage
@@ -15,8 +17,10 @@ Usage
 
 The module exposes the `LatLon` class which represents a point on the earth's surface. With this class you can create `LatLon` objects on which you can perform various operations.
 
-    var LatLon = require('mt-latlon');
-    var point = new LatLon(51.5136, -0.0983);
+```js
+var LatLon = require('mt-latlon');
+var point = new LatLon(51.5136, -0.0983);
+```
 
 The available operations of the `LatLon` objects is listed below.
 
@@ -29,7 +33,7 @@ Creates a point on the earth's surface at the supplied latitude/longitude.
 - __lon__ (number) longitude in numeric degrees
 - __rad__ (number, default = 6371) radius of earth if different value is required from standard 6,371km
 
-```
+```js
 var point = new LatLon(51.5136, -0.0983);
 ```
 
@@ -42,7 +46,7 @@ Source: Haversine formula - R. W. Sinnott, "Virtues of the Haversine", Sky and T
 - __point__ (LatLon) Latitude/longitude of destination point
 - __precision__ (number, default = 4) Number of significant digits to use for returned value
 
-```
+```js
 var p1 = new LatLon(51.5136, -0.0983);
 var p2 = new LatLon(51.4778, -0.0015);
 var dist = p1.distanceTo(p2);
@@ -57,7 +61,7 @@ Returns the (initial) bearing from this point to the supplied point, in degrees.
 
 - __point__ (LatLon) Latitude/longitude of destination point
 
-```
+```js
 var p1 = new LatLon(51.5136, -0.0983);
 var p2 = new LatLon(51.4778, -0.0015);
 var brng = p1.bearingTo(p2);
@@ -71,7 +75,7 @@ Returns final bearing arriving at supplied destination point from this point; th
 
 - __point__ (LatLon) Latitude/longitude of destination point
 
-```
+```js
 var p1 = new LatLon(51.5136, -0.0983);
 var p2 = new LatLon(51.4778, -0.0015);
 var brng = p1.finalBearingTo(p2);
@@ -86,7 +90,7 @@ Returns the midpoint between this point and the supplied point.
 
 - __point__ (LatLon) Latitude/longitude of destination point
 
-```
+```js
 var p1 = new LatLon(51.5136, -0.0983);
 var p2 = new LatLon(51.4778, -0.0015);
 var p3 = p1.midpointTo(p2);
@@ -103,7 +107,7 @@ given initial bearing (bearing may vary before destination is reached).
 - __brng__ (number) Initial bearing in degrees
 - __dist__ (number) Distance in km
 
-```
+```js
 var p1 = new LatLon(51.5136, -0.0983);
 var p2 = p1.destinationPoint(120, 10);
 // p2 = 51°28′07″N, 000°01′36″E (as LatLon object)
@@ -120,7 +124,7 @@ Returns the point of intersection of two paths defined by point and bearing. `nu
 - __p2__ (LatLon) Second point
 - __brng2__ (number) Initial bearing from second point
 
-```
+```js
 var p1 = new LatLon(51.5136, -0.0983);
 var p2 = new LatLon(51.4778, -0.0015);
 var p3 = LatLon.intersection(p1, 120, p2, 10);
@@ -135,7 +139,7 @@ Returns the distance from this point to the supplied point, in km, travelling al
 
 - __point__ (LatLon) Latitude/longitude of destination point
 
-```
+```js
 var p1 = new LatLon(51.5136, -0.0983);
 var p2 = new LatLon(51.4778, -0.0015);
 var dist = p1.rhumbDistanceTo(p2);
@@ -149,7 +153,7 @@ Returns the bearing from this point to the supplied point along a rhumb line, in
 
 - __point__ (LatLon) Latitude/longitude of destination point
 
-```
+```js
 var p1 = new LatLon(51.5136, -0.0983);
 var p2 = new LatLon(51.4778, -0.0015);
 var dist = p1.rhumbBearingTo(p2);
@@ -164,7 +168,7 @@ Returns the destination point from this point having travelled the given distanc
 - __brng__ (number) Bearing in degrees from North
 - __dist__ (number) Distance in km
 
-```
+```js
 var p1 = new LatLon(51.5136, -0.0983);
 var p2 = p1.rhumbDestinationPoint(120, 10);
 // p2 = 51°28′07″N, 000°01′36″E (as LatLon object)
@@ -178,7 +182,7 @@ Returns the loxodromic midpoint (along a rhumb line) between this point and the 
 
 - __point__ (LatLon) Latitude/longitude of destination point
 
-```
+```js
 var p1 = new LatLon(51.5136, -0.0983);
 var p2 = new LatLon(51.4778, -0.0015);
 var p3 = p1.rhumbMidpointTo(p2);
@@ -193,7 +197,7 @@ Returns the latitude of this point; signed numeric degrees if no format, otherwi
 - __format__ (string, optional) Return value as `d`, `dm`, `dms`
 - __dp__ (number, optional, 0|2|4) Number of decimal places to display
 
-```
+```js
 var p1 = new LatLon(51.5136, -0.0983);
 var lat = p1.lat();
 // => 51.5136
@@ -215,7 +219,7 @@ Returns the longitude of this point; signed numeric degrees if no format, otherw
 - __format__ (string, optional) Return value as `d`, `dm`, `dms`
 - __dp__ (number, 0|2|4) Number of decimal places to display
 
-```
+```js
 var p1 = new LatLon(51.5136, -0.0983);
 var lon = p1.lon();
 // => -0.0983
