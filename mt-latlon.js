@@ -426,10 +426,10 @@
   };
 
   // Add support for AMD, Node and plain JS
-  if (typeof define === 'function' && define.amd) {
-      define(wrapper);
-  } else if (typeof exports === 'object') {
+  if (typeof exports === 'object') {
       module.exports = wrapper;
+  } else if (typeof define === 'function' && define.amd) {
+      define(wrapper);
   } else {
       root.LatLon = wrapper(Geo);
   }
