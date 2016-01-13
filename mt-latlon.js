@@ -130,7 +130,7 @@
       var lon3 = lon1 + Math.atan2(By, Math.cos(lat1) + Bx);
       var lon3 = (lon3+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
 
-      return new LatLon(toDeg(lat3), toDeg(lon3));
+      return toLatLonDeg(lat3, lon3, this._radius);
     }
 
 
@@ -156,7 +156,7 @@
                                    Math.cos(dist)-Math.sin(lat1)*Math.sin(lat2));
       lon2 = (lon2+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
 
-      return new LatLon(toDeg(lat2), toDeg(lon2));
+      return toLatLonDeg(lat2, lon2, this._radius);
     }
 
 
@@ -220,7 +220,7 @@
       var lon3 = lon1+dLon13;
       lon3 = (lon3+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
 
-      return new LatLon(toDeg(lat3), toDeg(lon3));
+      return toLatLonDeg(lat3, lon3, this._radius);
     }
 
 
@@ -298,7 +298,7 @@
 
       var lon2 = (lon1+dLon+3*Math.PI)%(2*Math.PI) - Math.PI;
 
-      return new LatLon(toDeg(lat2), toDeg(lon2));
+      return toLatLonDeg(lat2, lon2, this._radius);
     }
 
     /**
@@ -324,7 +324,7 @@
 
       var lon3 = (lon3+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
 
-      return new LatLon(toDeg(lat3), toDeg(lon3));
+      return toLatLonDeg(lat3, lon3, this._radius);
     }
 
 
@@ -413,6 +413,10 @@
       });
 
       return n;
+    }
+
+    function toLatLonDeg(latRad, lonRad, radius) {
+      return new LatLon(toDeg(latRad), toDeg(lonRad), radius)
     }
 
     return LatLon;
