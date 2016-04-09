@@ -39,7 +39,7 @@
 
 
     /**
-     * Returns the distance from this point to the supplied point, in km 
+     * Returns the distance from this point to the supplied point, in km
      * (using Haversine formula)
      *
      * from: Haversine formula - R. W. Sinnott, "Virtues of the Haversine",
@@ -52,19 +52,19 @@
     LatLon.prototype.distanceTo = function(point, precision) {
       // default 4 sig figs reflects typical 0.3% accuracy of spherical model
       if (typeof precision == 'undefined') precision = 4;
-      
+
       var R = this._radius;
-      var lat1 = this._lat.toRad(), lon1 = this._lon.toRad();
-      var lat2 = point._lat.toRad(), lon2 = point._lon.toRad();
+      var lat1 = toRad(this._lat), lon1 = toRad(this._lon);
+      var lat2 = toRad(point._lat), lon2 = toRad(point._lon);
       var dLat = lat2 - lat1;
       var dLon = lon2 - lon1;
 
       var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1) * Math.cos(lat2) * 
+              Math.cos(lat1) * Math.cos(lat2) *
               Math.sin(dLon/2) * Math.sin(dLon/2);
       var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
       var d = R * c;
-      return d.toPrecisionFixed(precision);
+      return toPrecisionFixed(d, precision);
     }
 
 
@@ -76,20 +76,20 @@
      * @returns {Number} Initial bearing in degrees from North
      */
     LatLon.prototype.bearingTo = function(point) {
-      var lat1 = this._lat.toRad(), lat2 = point._lat.toRad();
+      var lat1 = toRad(this._lat), lat2 = toRad(point._lat);
       var dLon = (point._lon-this._lon).toRad();
 
       var y = Math.sin(dLon) * Math.cos(lat2);
       var x = Math.cos(lat1)*Math.sin(lat2) -
               Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
       var brng = Math.atan2(y, x);
-      
-      return (brng.toDeg()+360) % 360;
+
+      return (toDeg(brng)+360) % 360;
     }
 
 
     /**
-     * Returns final bearing arriving at supplied destination point from this point; the final bearing 
+     * Returns final bearing arriving at supplied destination point from this point; the final bearing
      * will differ from the initial bearing by varying degrees according to distance and latitude
      *
      * @param   {LatLon} point: Latitude/longitude of destination point
@@ -97,16 +97,16 @@
      */
     LatLon.prototype.finalBearingTo = function(point) {
       // get initial bearing from supplied point back to this point...
-      var lat1 = point._lat.toRad(), lat2 = this._lat.toRad();
+      var lat1 = toRad(point._lat), lat2 = toRad(this._lat);
       var dLon = (this._lon-point._lon).toRad();
 
       var y = Math.sin(dLon) * Math.cos(lat2);
       var x = Math.cos(lat1)*Math.sin(lat2) -
               Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
       var brng = Math.atan2(y, x);
-              
+
       // ... & reverse it by adding 180°
-      return (brng.toDeg()+180) % 360;
+      return (toDeg(brng)+180) % 360;
     }
 
 
@@ -118,8 +118,8 @@
      * @returns {LatLon} Midpoint between this point and the supplied point
      */
     LatLon.prototype.midpointTo = function(point) {
-      var lat1 = this._lat.toRad(), lon1 = this._lon.toRad();
-      var lat2 = point._lat.toRad();
+      var lat1 = toRad(this._lat), lon1 = toRad(this._lon);
+      var lat2 = toRad(point._lat);
       var dLon = (point._lon-this._lon).toRad();
 
       var Bx = Math.cos(lat2) * Math.cos(dLon);
@@ -129,13 +129,13 @@
                         Math.sqrt( (Math.cos(lat1)+Bx)*(Math.cos(lat1)+Bx) + By*By) );
       var lon3 = lon1 + Math.atan2(By, Math.cos(lat1) + Bx);
       var lon3 = (lon3+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
-      
-      return new LatLon(lat3.toDeg(), lon3.toDeg());
+
+      return toLatLonDeg(lat3, lon3, this._radius);
     }
 
 
     /**
-     * Returns the destination point from this point having travelled the given distance (in km) on the 
+     * Returns the destination point from this point having travelled the given distance (in km) on the
      * given initial bearing (bearing may vary before destination is reached)
      *
      *   see http://williams.best.vwh.net/avform.htm#LL
@@ -147,16 +147,16 @@
     LatLon.prototype.destinationPoint = function(brng, dist) {
       dist = typeof(dist)=='number' ? dist : typeof(dist)=='string' && dist.trim()!='' ? +dist : NaN;
       dist = dist/this._radius;  // convert dist to angular distance in radians
-      brng = brng.toRad();  // 
-      var lat1 = this._lat.toRad(), lon1 = this._lon.toRad();
+      brng = toRad(brng);  //
+      var lat1 = toRad(this._lat), lon1 = toRad(this._lon);
 
-      var lat2 = Math.asin( Math.sin(lat1)*Math.cos(dist) + 
+      var lat2 = Math.asin( Math.sin(lat1)*Math.cos(dist) +
                             Math.cos(lat1)*Math.sin(dist)*Math.cos(brng) );
-      var lon2 = lon1 + Math.atan2(Math.sin(brng)*Math.sin(dist)*Math.cos(lat1), 
+      var lon2 = lon1 + Math.atan2(Math.sin(brng)*Math.sin(dist)*Math.cos(lat1),
                                    Math.cos(dist)-Math.sin(lat1)*Math.sin(lat2));
       lon2 = (lon2+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
 
-      return new LatLon(lat2.toDeg(), lon2.toDeg());
+      return toLatLonDeg(lat2, lon2, this._radius);
     }
 
 
@@ -174,22 +174,22 @@
     LatLon.intersection = function(p1, brng1, p2, brng2) {
       brng1 = typeof brng1 == 'number' ? brng1 : typeof brng1 == 'string' && trim(brng1)!='' ? +brng1 : NaN;
       brng2 = typeof brng2 == 'number' ? brng2 : typeof brng2 == 'string' && trim(brng2)!='' ? +brng2 : NaN;
-      var lat1 = p1._lat.toRad(), lon1 = p1._lon.toRad();
-      var lat2 = p2._lat.toRad(), lon2 = p2._lon.toRad();
-      var brng13 = brng1.toRad(), brng23 = brng2.toRad();
+      var lat1 = toRad(p1._lat), lon1 = toRad(p1._lon);
+      var lat2 = toRad(p2._lat), lon2 = toRad(p2._lon);
+      var brng13 = toRad(brng1), brng23 = toRad(brng2);
       var dLat = lat2-lat1, dLon = lon2-lon1;
-      
-      var dist12 = 2*Math.asin( Math.sqrt( Math.sin(dLat/2)*Math.sin(dLat/2) + 
+
+      var dist12 = 2*Math.asin( Math.sqrt( Math.sin(dLat/2)*Math.sin(dLat/2) +
         Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)*Math.sin(dLon/2) ) );
       if (dist12 == 0) return null;
-      
+
       // initial/final bearings between points
-      var brngA = Math.acos( ( Math.sin(lat2) - Math.sin(lat1)*Math.cos(dist12) ) / 
+      var brngA = Math.acos( ( Math.sin(lat2) - Math.sin(lat1)*Math.cos(dist12) ) /
         ( Math.sin(dist12)*Math.cos(lat1) ) );
       if (isNaN(brngA)) brngA = 0;  // protect against rounding
-      var brngB = Math.acos( ( Math.sin(lat1) - Math.sin(lat2)*Math.cos(dist12) ) / 
+      var brngB = Math.acos( ( Math.sin(lat1) - Math.sin(lat2)*Math.cos(dist12) ) /
         ( Math.sin(dist12)*Math.cos(lat2) ) );
-      
+
       var brng12, brng21;
       if (Math.sin(lon2-lon1) > 0) {
         brng12 = brngA;
@@ -198,29 +198,29 @@
         brng12 = 2*Math.PI - brngA;
         brng21 = brngB;
       }
-      
+
       var alpha1 = (brng13 - brng12 + Math.PI) % (2*Math.PI) - Math.PI;  // angle 2-1-3
       var alpha2 = (brng21 - brng23 + Math.PI) % (2*Math.PI) - Math.PI;  // angle 1-2-3
-      
+
       if (Math.sin(alpha1)==0 && Math.sin(alpha2)==0) return null;  // infinite intersections
       if (Math.sin(alpha1)*Math.sin(alpha2) < 0) return null;       // ambiguous intersection
-      
+
       //alpha1 = Math.abs(alpha1);
       //alpha2 = Math.abs(alpha2);
       // ... Ed Williams takes abs of alpha1/alpha2, but seems to break calculation?
-      
-      var alpha3 = Math.acos( -Math.cos(alpha1)*Math.cos(alpha2) + 
+
+      var alpha3 = Math.acos( -Math.cos(alpha1)*Math.cos(alpha2) +
                            Math.sin(alpha1)*Math.sin(alpha2)*Math.cos(dist12) );
-      var dist13 = Math.atan2( Math.sin(dist12)*Math.sin(alpha1)*Math.sin(alpha2), 
+      var dist13 = Math.atan2( Math.sin(dist12)*Math.sin(alpha1)*Math.sin(alpha2),
                            Math.cos(alpha2)+Math.cos(alpha1)*Math.cos(alpha3) )
-      var lat3 = Math.asin( Math.sin(lat1)*Math.cos(dist13) + 
+      var lat3 = Math.asin( Math.sin(lat1)*Math.cos(dist13) +
                         Math.cos(lat1)*Math.sin(dist13)*Math.cos(brng13) );
-      var dLon13 = Math.atan2( Math.sin(brng13)*Math.sin(dist13)*Math.cos(lat1), 
+      var dLon13 = Math.atan2( Math.sin(brng13)*Math.sin(dist13)*Math.cos(lat1),
                            Math.cos(dist13)-Math.sin(lat1)*Math.sin(lat3) );
       var lon3 = lon1+dLon13;
       lon3 = (lon3+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
-      
-      return new LatLon(lat3.toDeg(), lon3.toDeg());
+
+      return toLatLonDeg(lat3, lon3, this._radius);
     }
 
 
@@ -236,21 +236,21 @@
      */
     LatLon.prototype.rhumbDistanceTo = function(point) {
       var R = this._radius;
-      var lat1 = this._lat.toRad(), lat2 = point._lat.toRad();
+      var lat1 = toRad(this._lat), lat2 = toRad(point._lat);
       var dLat = (point._lat-this._lat).toRad();
       var dLon = Math.abs(point._lon-this._lon).toRad();
-      
+
       var dPhi = Math.log(Math.tan(lat2/2+Math.PI/4)/Math.tan(lat1/2+Math.PI/4));
       var q = (isFinite(dLat/dPhi)) ? dLat/dPhi : Math.cos(lat1);  // E-W line gives dPhi=0
-      
+
       // if dLon over 180° take shorter rhumb across anti-meridian:
       if (Math.abs(dLon) > Math.PI) {
         dLon = dLon>0 ? -(2*Math.PI-dLon) : (2*Math.PI+dLon);
       }
-      
-      var dist = Math.sqrt(dLat*dLat + q*q*dLon*dLon) * R; 
-      
-      return dist.toPrecisionFixed(4);  // 4 sig figs reflects typical 0.3% accuracy of spherical model
+
+      var dist = Math.sqrt(dLat*dLat + q*q*dLon*dLon) * R;
+
+      return toPrecisionFixed(dist, 4);  // 4 sig figs reflects typical 0.3% accuracy of spherical model
     }
 
     /**
@@ -260,18 +260,18 @@
      * @returns {Number} Bearing in degrees from North
      */
     LatLon.prototype.rhumbBearingTo = function(point) {
-      var lat1 = this._lat.toRad(), lat2 = point._lat.toRad();
+      var lat1 = toRad(this._lat), lat2 = toRad(point._lat);
       var dLon = (point._lon-this._lon).toRad();
-      
+
       var dPhi = Math.log(Math.tan(lat2/2+Math.PI/4)/Math.tan(lat1/2+Math.PI/4));
       if (Math.abs(dLon) > Math.PI) dLon = dLon>0 ? -(2*Math.PI-dLon) : (2*Math.PI+dLon);
       var brng = Math.atan2(dLon, dPhi);
-      
-      return (brng.toDeg()+360) % 360;
+
+      return (toDeg(brng)+360) % 360;
     }
 
     /**
-     * Returns the destination point from this point having travelled the given distance (in km) on the 
+     * Returns the destination point from this point having travelled the given distance (in km) on the
      * given bearing along a rhumb line
      *
      * @param   {Number} brng: Bearing in degrees from North
@@ -281,24 +281,24 @@
     LatLon.prototype.rhumbDestinationPoint = function(brng, dist) {
       var R = this._radius;
       var d = parseFloat(dist)/R;  // d = angular distance covered on earth’s surface
-      var lat1 = this._lat.toRad(), lon1 = this._lon.toRad();
-      brng = brng.toRad();
+      var lat1 = toRad(this._lat), lon1 = toRad(this._lon);
+      brng = toRad(brng);
 
       var dLat = d*Math.cos(brng);
       // nasty kludge to overcome ill-conditioned results around parallels of latitude:
       if (Math.abs(dLat) < 1e-10) dLat = 0; // dLat < 1 mm
-      
+
       var lat2 = lat1 + dLat;
       var dPhi = Math.log(Math.tan(lat2/2+Math.PI/4)/Math.tan(lat1/2+Math.PI/4));
       var q = (isFinite(dLat/dPhi)) ? dLat/dPhi : Math.cos(lat1);  // E-W line gives dPhi=0
       var dLon = d*Math.sin(brng)/q;
-      
+
       // check for some daft bugger going past the pole, normalise latitude if so
       if (Math.abs(lat2) > Math.PI/2) lat2 = lat2>0 ? Math.PI-lat2 : -Math.PI-lat2;
-      
+
       var lon2 = (lon1+dLon+3*Math.PI)%(2*Math.PI) - Math.PI;
-     
-      return new LatLon(lat2.toDeg(), lon2.toDeg());
+
+      return toLatLonDeg(lat2, lon2, this._radius);
     }
 
     /**
@@ -309,22 +309,22 @@
      * @returns {LatLon} Midpoint between this point and the supplied point
      */
     LatLon.prototype.rhumbMidpointTo = function(point) {
-      var lat1 = this._lat.toRad(), lon1 = this._lon.toRad();
-      var lat2 = point._lat.toRad(), lon2 = point._lon.toRad();
-      
+      var lat1 = toRad(this._lat), lon1 = toRad(this._lon);
+      var lat2 = toRad(point._lat), lon2 = toRad(point._lon);
+
       if (Math.abs(lon2-lon1) > Math.PI) lon1 += 2*Math.PI; // crossing anti-meridian
-      
+
       var lat3 = (lat1+lat2)/2;
       var f1 = Math.tan(Math.PI/4 + lat1/2);
       var f2 = Math.tan(Math.PI/4 + lat2/2);
       var f3 = Math.tan(Math.PI/4 + lat3/2);
       var lon3 = ( (lon2-lon1)*Math.log(f3) + lon1*Math.log(f2) - lon2*Math.log(f1) ) / Math.log(f2/f1);
-      
+
       if (!isFinite(lon3)) lon3 = (lon1+lon2)/2; // parallel of latitude
-      
+
       var lon3 = (lon3+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
-      
-      return new LatLon(lat3.toDeg(), lon3.toDeg());
+
+      return toLatLonDeg(lat3, lon3, this._radius);
     }
 
 
@@ -332,7 +332,7 @@
 
 
     /**
-     * Returns the latitude of this point; signed numeric degrees if no format, otherwise format & dp 
+     * Returns the latitude of this point; signed numeric degrees if no format, otherwise format & dp
      * as per Geo.toLat()
      *
      * @param   {String} [format]: Return value as 'd', 'dm', 'dms'
@@ -341,12 +341,12 @@
      */
     LatLon.prototype.lat = function(format, dp) {
       if (typeof format == 'undefined') return this._lat;
-      
+
       return Geo.toLat(this._lat, format, dp);
     }
 
     /**
-     * Returns the longitude of this point; signed numeric degrees if no format, otherwise format & dp 
+     * Returns the longitude of this point; signed numeric degrees if no format, otherwise format & dp
      * as per Geo.toLon()
      *
      * @param   {String} [format]: Return value as 'd', 'dm', 'dms'
@@ -355,7 +355,7 @@
      */
     LatLon.prototype.lon = function(format, dp) {
       if (typeof format == 'undefined') return this._lon;
-      
+
       return Geo.toLon(this._lon, format, dp);
     }
 
@@ -368,61 +368,58 @@
      */
     LatLon.prototype.toString = function(format, dp) {
       if (typeof format == 'undefined') format = 'dms';
-      
+
       return Geo.toLat(this._lat, format, dp) + ', ' + Geo.toLon(this._lon, format, dp);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-    // ---- extend Number object with methods for converting degrees/radians
+    // ---- helper functions for converting degrees/radians
 
     /** Converts numeric degrees to radians */
-    if (typeof Number.prototype.toRad == 'undefined') {
-      Number.prototype.toRad = function() {
-        return this * Math.PI / 180;
-      }
+    function toRad(value) {
+      return value * Math.PI / 180;
     }
 
     /** Converts radians to numeric (signed) degrees */
-    if (typeof Number.prototype.toDeg == 'undefined') {
-      Number.prototype.toDeg = function() {
-        return this * 180 / Math.PI;
-      }
+    function toDeg(value) {
+      return value * 180 / Math.PI;
     }
 
-    /** 
+    /**
      * Formats the significant digits of a number, using only fixed-point notation (no exponential)
-     * 
+     *
+     * @param   {Number} value: The number to convert
      * @param   {Number} precision: Number of significant digits to appear in the returned string
      * @returns {String} A string representation of number which contains precision significant digits
      */
-    if (typeof Number.prototype.toPrecisionFixed == 'undefined') {
-      Number.prototype.toPrecisionFixed = function(precision) {
-        
-        // use standard toPrecision method
-        var n = this.toPrecision(precision);
-        
-        // ... but replace +ve exponential format with trailing zeros
-        n = n.replace(/(.+)e\+(.+)/, function(n, sig, exp) {
-          sig = sig.replace(/\./, '');       // remove decimal from significand
-          var l = sig.length - 1;
-          while (exp-- > l) sig = sig + '0'; // append zeros from exponent
-          return sig;
-        });
-        
-        // ... and replace -ve exponential format with leading zeros
-        n = n.replace(/(.+)e-(.+)/, function(n, sig, exp) {
-          sig = sig.replace(/\./, '');       // remove decimal from significand
-          while (exp-- > 1) sig = '0' + sig; // prepend zeros from exponent
-          return '0.' + sig;
-        });
-        
-        return n;
-      }
+    function toPrecisionFixed(value, precision) {
+      // use standard toPrecision method
+      var n = value.toPrecision(precision);
+
+      // ... but replace +ve exponential format with trailing zeros
+      n = n.replace(/(.+)e\+(.+)/, function(n, sig, exp) {
+        sig = sig.replace(/\./, '');       // remove decimal from significand
+        var l = sig.length - 1;
+        while (exp-- > l) sig = sig + '0'; // append zeros from exponent
+        return sig;
+      });
+
+      // ... and replace -ve exponential format with leading zeros
+      n = n.replace(/(.+)e-(.+)/, function(n, sig, exp) {
+        sig = sig.replace(/\./, '');       // remove decimal from significand
+        while (exp-- > 1) sig = '0' + sig; // prepend zeros from exponent
+        return '0.' + sig;
+      });
+
+      return n;
+    }
+
+    function toLatLonDeg(latRad, lonRad, radius) {
+      return new LatLon(toDeg(latRad), toDeg(lonRad), radius)
     }
 
     return LatLon;
-
   };
 
   // Add support for AMD, Node and plain JS
