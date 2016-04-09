@@ -1,6 +1,6 @@
 {
   "name": "mt-latlon",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "Latitude/longitude spherical geodesy formulae and scripts.",
   "main": "index.js",
   "repository": {
