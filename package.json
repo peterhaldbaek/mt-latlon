@@ -23,6 +23,6 @@
   },
   "homepage": "https://github.com/peterhaldbaek/mt-latlon",
   "dependencies": {
-    "mt-geo": "1.0.0"
+    "mt-geo": "1.0.1"
   }
 }
