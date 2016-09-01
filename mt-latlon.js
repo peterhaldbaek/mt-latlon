@@ -77,7 +77,7 @@
      */
     LatLon.prototype.bearingTo = function(point) {
       var lat1 = toRad(this._lat), lat2 = toRad(point._lat);
-      var dLon = (point._lon-this._lon).toRad();
+      var dLon = toRad(point._lon-this._lon);
 
       var y = Math.sin(dLon) * Math.cos(lat2);
       var x = Math.cos(lat1)*Math.sin(lat2) -
@@ -98,7 +98,7 @@
     LatLon.prototype.finalBearingTo = function(point) {
       // get initial bearing from supplied point back to this point...
       var lat1 = toRad(point._lat), lat2 = toRad(this._lat);
-      var dLon = (this._lon-point._lon).toRad();
+      var dLon = toRad(this._lon-point._lon);
 
       var y = Math.sin(dLon) * Math.cos(lat2);
       var x = Math.cos(lat1)*Math.sin(lat2) -
@@ -120,7 +120,7 @@
     LatLon.prototype.midpointTo = function(point) {
       var lat1 = toRad(this._lat), lon1 = toRad(this._lon);
       var lat2 = toRad(point._lat);
-      var dLon = (point._lon-this._lon).toRad();
+      var dLon = toRad(point._lon-this._lon);
 
       var Bx = Math.cos(lat2) * Math.cos(dLon);
       var By = Math.cos(lat2) * Math.sin(dLon);
@@ -237,8 +237,8 @@
     LatLon.prototype.rhumbDistanceTo = function(point) {
       var R = this._radius;
       var lat1 = toRad(this._lat), lat2 = toRad(point._lat);
-      var dLat = (point._lat-this._lat).toRad();
-      var dLon = Math.abs(point._lon-this._lon).toRad();
+      var dLat = toRad(point._lat-this._lat);
+      var dLon = toRad(Math.abs(point._lon-this._lon));
 
       var dPhi = Math.log(Math.tan(lat2/2+Math.PI/4)/Math.tan(lat1/2+Math.PI/4));
       var q = (isFinite(dLat/dPhi)) ? dLat/dPhi : Math.cos(lat1);  // E-W line gives dPhi=0
@@ -261,7 +261,7 @@
      */
     LatLon.prototype.rhumbBearingTo = function(point) {
       var lat1 = toRad(this._lat), lat2 = toRad(point._lat);
-      var dLon = (point._lon-this._lon).toRad();
+      var dLon = toRad(point._lon-this._lon);
 
       var dPhi = Math.log(Math.tan(lat2/2+Math.PI/4)/Math.tan(lat1/2+Math.PI/4));
       if (Math.abs(dLon) > Math.PI) dLon = dLon>0 ? -(2*Math.PI-dLon) : (2*Math.PI+dLon);
