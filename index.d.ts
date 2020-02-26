@@ -1,4 +1,4 @@
-   export class LatLon {
+   export default class LatLon {
       private latitude: number;
       private longitude: number;
       /**
@@ -104,7 +104,7 @@
        * @param   {Number} brng2: Initial bearing from second point
        * @returns {LatLon} Destination point (null if no unique intersection defined)
        */
-      intersection: (p1: LatLon, brng1: Number, p2: LatLon, brng2: Number) => LatLon;
+      static intersection: (p1: LatLon, brng1: Number, p2: LatLon, brng2: Number) => LatLon;
 
       /**
        * Returns the distance from this point to the supplied point, in km, travelling along a rhumb line
